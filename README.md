@@ -1,0 +1,1 @@
+# snoonet-inspircd-modules
