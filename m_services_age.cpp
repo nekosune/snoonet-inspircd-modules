@@ -38,6 +38,44 @@ class AChannel_R : public SimpleChannelModeHandler
 };
  */
 
+class User_V : public ModeHandler
+{
+    
+public:
+    User_V(Module* Creator) : ModeHandler(Creator, "u_user_age", 'V', PARAM_ALWAYS, MODETYPE_USER) { }
+    
+    ModeAction OnModeChange(User* source, User* dest, Channel* channel, std::string &parameter, bool adding)
+    {
+        //if (!IS_LOCAL(source))
+        //{
+        if(adding)
+        {
+            dest->SetMode('V',true);
+            GetAccountAgeExtItem()->set(dest,parameter);
+            return MODEACTION_ALLOW;
+        }
+        
+        //}
+        //else
+        //{
+        //	source->WriteNumeric(500, "%s :Only a server may modify the +V user mode", source->nick.c_str());
+        //}
+        //return MODEACTION_DENY;
+    }
+    std::string GetUserParameter(User* useor)
+    {
+        return *(GetAccountAgeExtItem()->get(useor));
+    }
+    int GetNumParams(bool adding)
+    {
+        return 1;
+    }
+    void OnParameterMissing(User* user, User* dest, Channel* channel)
+    {
+        user->WriteServ("NOTICE %s :*** The user mode +V requires a parameter. Please provide a parameter, e.g. '+V *'.",
+                        user->nick.c_str());
+    }
+};
 
 class ModuleServicesAge : public Module
 
